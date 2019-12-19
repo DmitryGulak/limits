@@ -1,10 +1,19 @@
 language: python
-python:
-    - "2.7"
-    - "3.7"
-    - "3.8"
-    - "pypy"
-    - "pypy3"
+env:
+  - CMD=tests
+jobs:
+  include:
+  - python: "2.7"
+    env:
+     - CMD=all-tests
+     - COVERAGE=true
+  - python: "3.7"
+  - python: "pypy"
+  - python: "pypy3"
+  - python: "2.7"
+    env: CMD=integration-tests
+  - python: "3.7"
+    env: CMD=integration-tests
 
 cache:
   pip: true
@@ -20,6 +29,7 @@ services:
     - redis-server
     - memcached
 
-script: make -f Makefile.tests tests
+script: make -f Makefile.tests $CMD
 after_success:
-    - coveralls
+  - test $COVERAGE = "true" &&
+    coveralls
